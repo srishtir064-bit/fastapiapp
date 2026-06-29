@@ -3,10 +3,10 @@ from fastapi import FastAPI
 from routers import company_router, job_router
 from database import Base, engine
 
-app = FastAPI(title="FastAPI Company App", version="1.0.0")
-
-# Create database tables
+# Create all tables on startup
 Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="FastAPI Company App")
 
 app.include_router(company_router)
 app.include_router(job_router)

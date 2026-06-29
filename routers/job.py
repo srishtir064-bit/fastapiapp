@@ -67,35 +67,9 @@ def delete_job(job_id: int, db: Session = Depends(get_db)):
     db.delete(db_job)
     db.commit()
     return None
-    
-    if job.company_id is not None:
-        company = db.query(Company).filter(Company.id == job.company_id).first()
-        if not company:
-            raise HTTPException(status_code=404, detail="Company not found")
-        db_job.company_id = job.company_id
-    
-    if job.title is not None:
-        db_job.title = job.title
-    if job.salary is not None:
-        db_job.salary = job.salary
-    if job.description is not None:
-        db_job.description = job.description
-    
-    db.commit()
-    db.refresh(db_job)
-    return db_job
 
-@router.delete("/{job_id}")
-def delete_job(job_id: int, db: Session = Depends(get_db)):
-    db_job = db.query(Job).filter(Job.id == job_id).first()
-    if not db_job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    
-    db.delete(db_job)
-    db.commit()
-    return {"message": "Job deleted successfully"}
 
-@router.get("/company/{company_id}", response_model=list[JobResponse])
+@router.get("/company/{company_id}", response_model=List[JobResponse])
 def get_jobs_by_company(company_id: int, db: Session = Depends(get_db)):
     company = db.query(Company).filter(Company.id == company_id).first()
     if not company:
@@ -103,4 +77,3 @@ def get_jobs_by_company(company_id: int, db: Session = Depends(get_db)):
     
     jobs = db.query(Job).filter(Job.company_id == company_id).all()
     return jobs
-    
