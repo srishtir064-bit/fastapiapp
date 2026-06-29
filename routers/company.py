@@ -1,20 +1,64 @@
-from fastapi import APIRouter
-from schemas.company import CompanyCreate,
-router=APIRouter(prefix="/comapany",tags=["company"])
-companyUpdate,companyResponse
-from models import company ,job
-from sqlslchemy.orm import session
-from ..database import ge_db,SessionLocal
-settle
-router = APIRouter()
-@router.get("/")
-def read_company():
-    return {"company": "Company root"}
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
-@router.get("/{company_id}")
-def read_company(company_id: int):
-    return {"company_id": company_id}
+from schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
+from models.company import Company
+from database import get_db
 
-@router.get("/{company_id}")
-def get_company(company_id: int):
-    return company[company_id]
+router = APIRouter(prefix="/companies", tags=["companies"])
+
+
+@router.get("/", response_model=List[CompanyResponse])
+def list_companies(db: Session = Depends(get_db)):
+    companies = db.query(Company).all()
+    return companies
+
+
+@router.post("/", response_model=CompanyResponse, status_code=status.HTTP_201_CREATED)
+def create_company(payload: CompanyCreate, db: Session = Depends(get_db)):
+    db_company = Company(
+        name=payload.name,
+        email=payload.email,
+        phone=payload.phone
+    )
+    db.add(db_company)
+    db.commit()
+    db.refresh(db_company)
+    return db_company
+
+
+@router.get("/{company_id}", response_model=CompanyResponse)
+def get_company(company_id: int, db: Session = Depends(get_db)):
+    company = db.query(Company).filter(Company.id == company_id).first()
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    return company
+
+
+@router.put("/{company_id}", response_model=CompanyResponse)
+def update_company(company_id: int, payload: CompanyUpdate, db: Session = Depends(get_db)):
+    db_company = db.query(Company).filter(Company.id == company_id).first()
+    if not db_company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    update_data = payload.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        if value is not None:
+            setattr(db_company, field, value)
+    
+    db.add(db_company)
+    db.commit()
+    db.refresh(db_company)
+    return db_company
+
+
+@router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_company(company_id: int, db: Session = Depends(get_db)):
+    db_company = db.query(Company).filter(Company.id == company_id).first()
+    if not db_company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    
+    db.delete(db_company)
+    db.commit()
+    return None
