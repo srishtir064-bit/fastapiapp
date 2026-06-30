@@ -1,7 +1,7 @@
 function Footer() {
   return (
-    <footer>
-      <p>.All rights reserved by Talentspark.</p>
+    <footer className="footer" id="contact">
+      <p>TalentSpark © 2026. All rights reserved.</p>
     </footer>
   );
 }
