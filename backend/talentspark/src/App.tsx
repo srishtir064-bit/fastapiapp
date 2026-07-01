@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import NavBar from "./components/NavBar";
-import Welcome from "./components/Welcome";
+import Profile from "./components/Profile";
 import CompanyCard from "./components/CompanyCard";
 import JobCard from "./components/JobCard";
 import Footer from "./components/Footer";
@@ -60,7 +60,7 @@ function App() {
     <div className="app-shell">
       <NavBar />
       <main>
-        <Welcome />
+        <Profile company={companies[0]} onAddCompany={(c) => setCompanies((s) => [c, ...s])} />
 
         <section className="section" id="companies">
           <h2>Featured Companies</h2>

@@ -1,7 +1,7 @@
 function NavBar() {
   return (
     <header className="navbar">
-      <div className="navbar__brand">TalentSpark</div>
+      <div className="navbar__brand">srishti</div>
       <nav className="navbar__links">
         <a href="#companies">Companies</a>
         <a href="#jobs">Jobs</a>
