@@ -14,6 +14,7 @@ function CompanyCard({ company }: Props) {
           <p>{company.location}</p>
         </div>
       </div>
+      
       <p className="company-card__info">{company.email}</p>
       <p className="company-card__info">{company.phone}</p>
     </article>
